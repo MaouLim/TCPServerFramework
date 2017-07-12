@@ -20,10 +20,8 @@ public abstract class ConnectionManager
 
     private ConcurrentHashMap<String, Communicator> communicatorMap = null;
 
-    public ConnectionManager(InetAddress localAddress,
-                             int         localPort,
-                             int         backlog) throws IOException {
-        super(localAddress, localPort, backlog);
+    public ConnectionManager(int localPort, int backlog) throws IOException {
+        super(localPort, backlog);
         this.communicatorMap = new ConcurrentHashMap<>();
     }
 

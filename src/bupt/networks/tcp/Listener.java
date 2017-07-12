@@ -8,9 +8,7 @@ package bupt.networks.tcp;
 import bupt.networks.tcp.behavior.ConnectionEstablishedHandler;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 /*
  * this class is to run a listener and listen for the connecting request until
@@ -30,15 +28,15 @@ public abstract class Listener
 	private boolean      available    = false;
 	private int          backlog      = DEFAULT_BACKLOG;
 
-	public Listener(InetAddress localAddress, int localPort, int backlog) throws IOException {
+	public Listener(int localPort, int backlog) throws IOException {
 		this.serverSocket = new ServerSocket(localPort, backlog);
 		this.serverSocket.setSoTimeout(DEFAULT_TIMEOUT);
 		this.backlog = backlog;
 		this.available = true;
 	}
 
-	public Listener(InetAddress localAddress, int backlog) throws IOException {
-		this(localAddress, DEFAULT_SERVER_PORT, backlog);
+	public Listener(int backlog) throws IOException {
+		this(DEFAULT_SERVER_PORT, backlog);
 	}
 
 	/* try to close the  */
