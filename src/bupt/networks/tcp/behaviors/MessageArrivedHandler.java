@@ -1,4 +1,4 @@
-package bupt.networks.tcp.behavior;
+package bupt.networks.tcp.behaviors;
 
 /*
  * Created by Maou Lim on 2017/7/11.

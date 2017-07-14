@@ -4,10 +4,10 @@ package bupt.networks.tcp;
  * Created by Maou on 2017/7/5.
  */
 
-//import android.bupt.util.Log;
-
-import bupt.networks.tcp.behavior.ConnectionEstablishedHandler;
-import bupt.networks.tcp.behavior.ConnectionFailedHandler;
+import bupt.networks.tcp.behaviors.ConnectionEstablishedHandler;
+import bupt.networks.tcp.behaviors.FailedToConnectHandler;
+import bupt.networks.tcp.exceptions.ComponentInitFailedException;
+import com.sun.istack.internal.NotNull;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -20,7 +20,7 @@ import java.net.Socket;
  * handleConnectionEstablished() to tell how to handle the connection when established
  */
 public abstract class Connector
-		implements Runnable, ConnectionEstablishedHandler, ConnectionFailedHandler {
+		implements Runnable, ConnectionEstablishedHandler, FailedToConnectHandler {
 
 	public static final String TAG = "Connector";
 
@@ -29,20 +29,30 @@ public abstract class Connector
 
 	private InetAddress remoteAddress = null;
 	private int         remotePort    = DEFAULT_REMOTE_PORT;
+	private int  		timeout       = DEFAULT_TIMEOUT;
 
-	public Connector(InetAddress remoteAddress, int remotePort) {
+	public Connector(@NotNull InetAddress remoteAddress, int remotePort, int timeout)
+			throws ComponentInitFailedException {
+		if (remotePort < 0 || 65536 <= remotePort) {
+			throw new ComponentInitFailedException("port is invalid.");
+		}
+		if (timeout < 0) {
+			throw new ComponentInitFailedException("timeout could't be less than zero.");
+		}
+
 		this.remoteAddress = remoteAddress;
 		this.remotePort = remotePort;
+		this.timeout = timeout;
 	}
 
-	public Connector(InetAddress remoteAddress) {
-		this(remoteAddress, DEFAULT_REMOTE_PORT);
+	public Connector(@NotNull InetAddress remoteAddress) throws ComponentInitFailedException {
+		this(remoteAddress, DEFAULT_REMOTE_PORT, DEFAULT_TIMEOUT);
 	}
 
-	public void handleConnectionFailed(Socket socket, Throwable throwable, Object sender) {
+	public void handleFailedToConnect(Socket socket, Throwable throwable, Object sender) {
 
 		/* print the reason of the failure */
-		//Log.e(TAG, "exception throw when failed to connect", throwable);
+		System.err.println("failed to connect to remote endpoint. reason: " + throwable.getStackTrace());
 
 		/* try to close the socket */
 		try {
@@ -51,8 +61,12 @@ public abstract class Connector
 			}
 		}
 		catch (IOException ex) {
-			//Log.e(TAG, "exception in handleConnectionFailed", ex);
+			ex.printStackTrace();
 		}
+	}
+
+	public void start() {
+		TCPHelper.startConnector(this);
 	}
 
 	@Override
@@ -60,18 +74,25 @@ public abstract class Connector
 		Socket socket = new Socket();
 
 		try {
-			//Log.e(TAG, "start to connect tcp... try to connect " + remoteAddress.getHostAddress());
-			socket.bind(null);
 			socket.connect(
-				new InetSocketAddress(remoteAddress.getHostAddress(), remotePort),
-				DEFAULT_TIMEOUT
+				new InetSocketAddress(remoteAddress, remotePort),
+				timeout
 			);
 
 			handleConnectionEstablished(socket, this);
 		}
 
 		catch (IOException ex) {
-			handleConnectionFailed(socket, ex, this);
+			handleFailedToConnect(socket, ex, this);
+		}
+
+		finally {
+			if (!socket.isClosed()) {
+				try {
+					socket.close();
+				}
+				catch (IOException e) { }
+			}
 		}
 	}
 }

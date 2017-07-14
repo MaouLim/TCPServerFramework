@@ -1,4 +1,4 @@
-package bupt.networks.tcp.behavior;
+package bupt.networks.tcp.behaviors;
 
 import java.net.Socket;
 
