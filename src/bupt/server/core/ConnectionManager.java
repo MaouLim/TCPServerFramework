@@ -2,13 +2,10 @@ package bupt.server.core;
 
 import bupt.networks.tcp.Communicator;
 import bupt.networks.tcp.Listener;
-import bupt.networks.tcp.TCPHelper;
 import bupt.networks.tcp.exceptions.ComponentInitFailedException;
 import bupt.server.protocol.MessageBase;
 import bupt.server.protocol.MessageBuilder;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,7 +47,7 @@ public abstract class ConnectionManager
                     }
                     catch (InterruptedException ex) { }
 
-                    System.err.println("receiver timeout, restart receiving");
+                    System.err.println("receiver timeout, restart receiving task");
                 }
 
                 @Override

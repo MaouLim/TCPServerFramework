@@ -7,6 +7,7 @@ package bupt.networks.tcp;
 
 import bupt.networks.tcp.behaviors.ConnectionEstablishedHandler;
 import bupt.networks.tcp.behaviors.ExceptionHandler;
+import bupt.networks.tcp.behaviors.TimeoutHandler;
 import bupt.networks.tcp.exceptions.ComponentInitFailedException;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.net.SocketTimeoutException;
  * need to be implement to determinate how to handle the connection.
  */
 public abstract class Listener
-		implements Runnable, ConnectionEstablishedHandler, ExceptionHandler {
+		implements Runnable, ConnectionEstablishedHandler, ExceptionHandler, TimeoutHandler {
 
 	public static final String TAG = "Listener";
 
@@ -89,6 +90,7 @@ public abstract class Listener
 
 			catch (SocketTimeoutException ex) {
 				/* timeout to check out available */
+				handleTimeout(null, this);
 			}
 
 			catch (IOException ex) {

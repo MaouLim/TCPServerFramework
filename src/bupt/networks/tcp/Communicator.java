@@ -8,18 +8,19 @@ import bupt.networks.tcp.behaviors.ConnectionResetHandler;
 import bupt.networks.tcp.behaviors.MessageArrivedHandler;
 import bupt.networks.tcp.behaviors.TimeoutHandler;
 import bupt.networks.tcp.exceptions.ComponentInitFailedException;
-import bupt.networks.tcp.exceptions.ConnectionResetException;
+import bupt.util.ArrayUtil;
+import bupt.util.BytesUtil;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /*
  * this class is to manage a connection with a tcp-connected remote endpoint.
@@ -35,16 +36,18 @@ public abstract class Communicator
 
 	public static final String TAG = "Communicator";
 
-	public static final int RECEIVE_BUFF_SIZE = 1024;
-	public static final int DEFAULT_TIMEOUT   = 1000;
+	public static final int     RECEIVE_BUFF_SIZE = 1024;
+	public static final int     DEFAULT_TIMEOUT   = 1000;
+	public static final Charset DEFAULT_CHARSET   = StandardCharsets.UTF_8;
 
 	private Socket  socket    = null;
 	private boolean available = false;
+	private Charset charset   = DEFAULT_CHARSET;
 
 	private DataInputStream  inputStream  = null;
 	private DataOutputStream outputStream = null;
 
-	public Communicator(@NotNull Socket socket, int timeout)
+	public Communicator(@NotNull Socket socket, int timeout, Charset charset)
 			throws ComponentInitFailedException {
 
 		if (socket.isClosed() || !socket.isConnected()) {
@@ -56,6 +59,7 @@ public abstract class Communicator
 		}
 
 		this.socket = socket;
+		this.charset = charset;
 
 		try {
 			this.socket.setSoTimeout(timeout);
@@ -68,9 +72,19 @@ public abstract class Communicator
 		}
 	}
 
+	public Communicator(@NotNull Socket socket, int timeout)
+			throws ComponentInitFailedException {
+		this(socket, timeout, DEFAULT_CHARSET);
+	}
+
+	public Communicator(@NotNull Socket socket, Charset charset)
+			throws ComponentInitFailedException {
+		this(socket, DEFAULT_TIMEOUT, charset);
+	}
+
 	public Communicator(@NotNull Socket socket)
 			throws ComponentInitFailedException {
-		this(socket, DEFAULT_TIMEOUT);
+		this(socket, DEFAULT_TIMEOUT, DEFAULT_CHARSET);
 	}
 
 	public boolean isAvailable() {
@@ -83,11 +97,11 @@ public abstract class Communicator
 		}
 
 		try {
-			//todo merge the lenBytes and buff
-			byte[] buff = message.getBytes();
-			/* send the length of the message */
-			outputStream.writeInt(buff.length);
-			/* then send the content */
+			byte[] contentBytes = message.getBytes(charset);
+			byte[] lenBytes = BytesUtil.getBytes(contentBytes.length);
+
+			byte[] buff = ArrayUtil.concat(lenBytes, contentBytes);
+			/* then write the buff to the output stream */
 			outputStream.write(buff, 0, buff.length);
 
 			return true;
@@ -146,7 +160,7 @@ public abstract class Communicator
 					if (readSize <= 0) {
 						throw new IOException("Remote socket has been closed actively.");
 					}
-					builder.append(new String(buff, 0, readSize));
+					builder.append(new String(buff, 0, readSize, charset));
 					messageSize -= readSize;
 				}
 
@@ -179,5 +193,9 @@ public abstract class Communicator
 		}
 
 		return socket.getLocalSocketAddress();
+	}
+
+	public Charset getCharset() {
+		return charset;
 	}
 }
