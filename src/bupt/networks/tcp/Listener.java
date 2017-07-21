@@ -12,6 +12,7 @@ import bupt.networks.tcp.exceptions.ComponentInitFailedException;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 /*
@@ -76,6 +77,11 @@ public abstract class Listener
 			}
 		}
 		catch (IOException ex) { }
+	}
+
+	@Override
+	public void handleTimeout(Socket socket, Object sender) {
+		System.err.println("listener timeout, checkout available-flag and restart to listening");
 	}
 
 	@Override

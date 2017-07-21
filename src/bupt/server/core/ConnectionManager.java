@@ -23,14 +23,32 @@ public abstract class ConnectionManager
         this.communicatorMap = new ConcurrentHashMap<>();
     }
 
-    public void dispatch(String targetCommunicatorId, MessageBase message) {
-        communicatorMap.computeIfPresent(
+    // todo message packet should include target communicators;
+    /* dispatch message to the  */
+    public boolean dispatch(String targetCommunicatorId, MessageBase message) {
+        return null != communicatorMap.computeIfPresent(
                 targetCommunicatorId,
                 (id, communicator) -> {
                     communicator.send(message.toString());
                     return communicator;
                 }
         );
+    }
+
+    public boolean remove(String communicatorId) {
+        Communicator removed = communicatorMap.remove(communicatorId);
+        if (null == removed) {
+            return false;
+        }
+        removed.close();
+        return true;
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        communicatorMap.forEach((id, communicator) -> communicator.close());
+        communicatorMap.clear();
     }
 
     @Override
@@ -81,6 +99,15 @@ public abstract class ConnectionManager
                     onMessage(message, this);
                 }
             };
+
+            if (!communicator.isAvailable()) {
+                return;
+            }
+
+            communicatorMap.put(
+                    communicator.getRemoteSocketAddress().toString(),
+                    communicator
+            );
 
             communicator.start();
         }
