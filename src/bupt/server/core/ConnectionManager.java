@@ -3,18 +3,24 @@ package bupt.server.core;
 import bupt.networks.tcp.Communicator;
 import bupt.networks.tcp.Listener;
 import bupt.networks.tcp.exceptions.ComponentInitFailedException;
-import bupt.server.protocol.MessageBase;
-import bupt.server.protocol.MessageBuilder;
+import bupt.server.protocol.primitive.ProtocolUnit;
+import bupt.server.protocol.primitive.ProtocolUnitDecoder;
+import bupt.server.protocol.primitive.ProtocolUnitEncoder;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * Created by Maou Lim on 2017/7/11.
  */
 public abstract class ConnectionManager
-        extends Listener implements MessageBuilder, MessageProcessor {
+        extends Listener
+        implements ProtocolUnitDecoder,
+                   ProtocolUnitEncoder,
+                   ProtocolUnitProcessor {
 
     private ConcurrentHashMap<String, Communicator> communicatorMap = null;
 
@@ -23,16 +29,19 @@ public abstract class ConnectionManager
         this.communicatorMap = new ConcurrentHashMap<>();
     }
 
-    // todo message packet should include target communicators;
-    /* dispatch message to the  */
-    public boolean dispatch(String targetCommunicatorId, MessageBase message) {
-        return null != communicatorMap.computeIfPresent(
-                targetCommunicatorId,
-                (id, communicator) -> {
-                    communicator.send(message.toString());
-                    return communicator;
-                }
-        );
+    /* dispatch pu to the specific communicators */
+    public void dispatch(ProtocolUnit unit) {
+        List<String> targets = unit.getTargetCommunicators();
+
+        for (String target : targets) {
+            communicatorMap.computeIfPresent(
+                    target,
+                    (id, communicator) -> {
+                        communicator.send(encode(unit));
+                        return communicator;
+                    }
+            );
+        }
     }
 
     public boolean remove(String communicatorId) {
@@ -86,21 +95,22 @@ public abstract class ConnectionManager
 
                 @Override
                 public void handleMessageArrived(String content, Object sender) {
-                    MessageBase message = parse(content);
+                    ProtocolUnit unit = decode(content);
 
-                    if (null == message) {
+                    if (null == unit) {
                         return;
                     }
 
-                    message.setSourceCommunicatorId(
+                    unit.setSourceCommunicator(
                             ((Communicator) sender).getRemoteSocketAddress().toString()
                     );
 
-                    onMessage(message, this);
+                    onMessage(unit, this);
                 }
             };
 
             if (!communicator.isAvailable()) {
+                communicator.close();
                 return;
             }
 
@@ -114,6 +124,13 @@ public abstract class ConnectionManager
 
         catch (ComponentInitFailedException ex) {
             ex.printStackTrace();
+
+            try {
+                if (null != socket && !socket.isClosed()) {
+                    socket.close();
+                }
+            }
+            catch (IOException e) { }
         }
     }
 }

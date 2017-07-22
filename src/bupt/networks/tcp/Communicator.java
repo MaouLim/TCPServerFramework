@@ -125,17 +125,23 @@ public abstract class Communicator
 		available = false;
 
 		try {
-			socket.close();
+			if (null != socket && !socket.isClosed()) {
+				socket.close();
+			}
 		}
 		catch (IOException ex) { }
 
 		try {
-			inputStream.close();
+			if (null != inputStream) {
+				inputStream.close();
+			}
 		}
 		catch (IOException ex) { }
 
 		try {
-			outputStream.close();
+			if (null == outputStream) {
+				outputStream.close();
+			}
 		}
 		catch (IOException ex) { }
 	}
@@ -180,7 +186,7 @@ public abstract class Communicator
 
 	@Nullable
 	public SocketAddress getRemoteSocketAddress() {
-		if (!available || socket.isClosed()) {
+		if (!available || null == socket || socket.isClosed()) {
 			return null;
 		}
 		return socket.getRemoteSocketAddress();
@@ -188,7 +194,7 @@ public abstract class Communicator
 
 	@Nullable
 	public SocketAddress getLocalSocketAddress() {
-		if (!available || socket.isClosed()) {
+		if (!available || null == socket || socket.isClosed()) {
 			return null;
 		}
 
