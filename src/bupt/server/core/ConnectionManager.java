@@ -84,12 +84,10 @@ public abstract class ConnectionManager
                     System.err.println("ConnectionReset reason: " + Arrays.toString(throwable.getStackTrace()));
 
                     String identifier = socket.getRemoteSocketAddress().toString();
-
-                    Communicator removed = communicatorMap.remove(identifier);
-                    if (null == removed) {
+                    if (!remove(identifier)) {
                         return;
                     }
-                    removed.close();
+
                     System.err.println("connection<" + identifier + "> has been removed");
                 }
 

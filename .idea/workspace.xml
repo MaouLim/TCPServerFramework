@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="966e1778-3186-482a-ba0a-c29262de50c6" name="Default" comment="1. optimized the">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/bupt/server/core/ProtocolUnitProcessor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/bupt/server/protocol/data/MessageBase.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/bupt/server/protocol/data/MessagePacket.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/bupt/server/protocol/primitive/ProtocolUnit.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/bupt/server/protocol/primitive/ProtocolUnitDecoder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/bupt/server/protocol/primitive/ProtocolUnitEncoder.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/bupt/networks/tcp/exceptions/ConnectionResetException.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/bupt/server/core/MessageProcessor.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/bupt/server/protocol/MessageBase.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/bupt/server/protocol/MessageBuilder.java" afterPath="" />
+    <list default="true" id="966e1778-3186-482a-ba0a-c29262de50c6" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/bupt/networks/tcp/Communicator.java" afterPath="$PROJECT_DIR$/src/bupt/networks/tcp/Communicator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/bupt/server/core/ConnectionManager.java" afterPath="$PROJECT_DIR$/src/bupt/server/core/ConnectionManager.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -89,8 +78,8 @@
       <file leaf-file-name="ConnectionManager.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/bupt/server/core/ConnectionManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2016">
-              <caret line="84" column="0" lean-forward="true" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+            <state relative-caret-position="93">
+              <caret line="52" column="20" lean-forward="true" selection-start-line="52" selection-start-column="20" selection-end-line="52" selection-end-column="20" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -756,7 +745,7 @@
       <workItem from="1499833394946" duration="1242000" />
       <workItem from="1499992387805" duration="9380000" />
       <workItem from="1500646684623" duration="4694000" />
-      <workItem from="1500720987446" duration="5948000" />
+      <workItem from="1500720987446" duration="6799000" />
     </task>
     <task id="LOCAL-00001" summary="1. optimize imports&#10;2. fixed the problem: merge length bytes and content bytes&#10;3. add ArrayUtil and BytesUtil">
       <created>1500649374877</created>
@@ -765,11 +754,18 @@
       <option name="project" value="LOCAL" />
       <updated>1500649374877</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="1. add the decoder/encoder">
+      <created>1500727001830</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1500727001830</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23485000" />
+    <option name="totallyTimeSpent" value="24336000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -822,7 +818,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="1. optimize imports&#10;2. fixed the problem: merge length bytes and content bytes&#10;3. add ArrayUtil and BytesUtil" />
-    <option name="LAST_COMMIT_MESSAGE" value="1. optimize imports&#10;2. fixed the problem: merge length bytes and content bytes&#10;3. add ArrayUtil and BytesUtil" />
+    <MESSAGE value="1. add the decoder/encoder" />
+    <option name="LAST_COMMIT_MESSAGE" value="1. add the decoder/encoder" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1058,6 +1055,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
           <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1065,6 +1063,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="714">
           <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1252,8 +1251,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bupt/server/core/ConnectionManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2016">
-          <caret line="84" column="0" lean-forward="true" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+        <state relative-caret-position="93">
+          <caret line="52" column="20" lean-forward="true" selection-start-line="52" selection-start-column="20" selection-end-line="52" selection-end-column="20" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
