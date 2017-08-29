@@ -72,7 +72,7 @@ public abstract class ConnectionManager
                     try {
                         Thread.sleep(ONE_MS);
                     }
-                    catch (InterruptedException ex) { }
+                    catch (InterruptedException ignored) { }
 
                     System.err.println("receiver timeout, restart receiving task");
                 }
@@ -128,7 +128,7 @@ public abstract class ConnectionManager
                     socket.close();
                 }
             }
-            catch (IOException e) { }
+            catch (IOException ignored) { }
         }
     }
 }

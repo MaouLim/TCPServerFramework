@@ -91,7 +91,7 @@ public abstract class Connector
 				try {
 					socket.close();
 				}
-				catch (IOException e) { }
+				catch (IOException ignored) { }
 			}
 		}
 	}

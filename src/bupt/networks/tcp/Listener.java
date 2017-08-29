@@ -76,7 +76,7 @@ public abstract class Listener
 				serverSocket.close();
 			}
 		}
-		catch (IOException ex) { }
+		catch (IOException ignored) { }
 	}
 
 	@Override

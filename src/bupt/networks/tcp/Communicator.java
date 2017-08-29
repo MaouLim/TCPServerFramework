@@ -129,21 +129,21 @@ public abstract class Communicator
 				socket.close();
 			}
 		}
-		catch (IOException ex) { }
+		catch (IOException ignored) { }
 
 		try {
 			if (null != inputStream) {
 				inputStream.close();
 			}
 		}
-		catch (IOException ex) { }
+		catch (IOException ignored) { }
 
 		try {
 			if (null == outputStream) {
 				outputStream.close();
 			}
 		}
-		catch (IOException ex) { }
+		catch (IOException ignored) { }
 	}
 
 	@Override
