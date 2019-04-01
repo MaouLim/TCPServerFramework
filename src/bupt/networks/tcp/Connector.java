@@ -84,9 +84,6 @@ public abstract class Connector
 
 		catch (IOException ex) {
 			handleFailedToConnect(socket, ex, this);
-		}
-
-		finally {
 			if (!socket.isClosed()) {
 				try {
 					socket.close();
