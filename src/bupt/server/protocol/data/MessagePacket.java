@@ -1,7 +1,5 @@
 package bupt.server.protocol.data;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +15,7 @@ public class MessagePacket extends MessageBase {
         this.properties = new HashMap<>();
     }
 
-    public MessagePacket(@NotNull Map<String, Object> properties) {
+    public MessagePacket(Map<String, Object> properties) {
         super();
         this.properties = properties;
     }

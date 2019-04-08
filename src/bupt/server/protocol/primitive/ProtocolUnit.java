@@ -1,7 +1,5 @@
 package bupt.server.protocol.primitive;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +21,7 @@ public class ProtocolUnit {
         this.targetCommunicatorIds = new ArrayList<>();
     }
 
-    public void setSourceCommunicator(@NotNull String sourceCommunicatorId) {
+    public void setSourceCommunicator(String sourceCommunicatorId) {
         this.sourceCommunicatorId = sourceCommunicatorId;
     }
 
@@ -31,11 +29,11 @@ public class ProtocolUnit {
         return this.sourceCommunicatorId;
     }
 
-    public void addTargetCommunicator(@NotNull String targetCommunicatorId) {
+    public void addTargetCommunicator(String targetCommunicatorId) {
         this.targetCommunicatorIds.add(targetCommunicatorId);
     }
 
-    public void addTargetCommunicators(@NotNull String[] communicatorIds) {
+    public void addTargetCommunicators(String[] communicatorIds) {
         for (String each : communicatorIds) {
             if (null == each) {
                 continue;
@@ -45,7 +43,7 @@ public class ProtocolUnit {
         }
     }
 
-    public void addTargetCommunicators(@NotNull Collection<String> communicatorIds) {
+    public void addTargetCommunicators(Collection<String> communicatorIds) {
         for (String each : communicatorIds) {
             if (null == each) {
                 continue;
@@ -55,7 +53,7 @@ public class ProtocolUnit {
         }
     }
 
-    public int removeTargetCommunicator(@NotNull String targetCommunicatorId) {
+    public int removeTargetCommunicator(String targetCommunicatorId) {
         boolean needRemove = false;
         int count = 0;
         do {

@@ -7,7 +7,6 @@ package bupt.networks.tcp;
 import bupt.networks.tcp.behaviors.ConnectionEstablishedHandler;
 import bupt.networks.tcp.behaviors.FailedToConnectHandler;
 import bupt.networks.tcp.exceptions.ComponentInitFailedException;
-import com.sun.istack.internal.NotNull;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -19,7 +18,7 @@ import java.net.Socket;
  * it needs to be run on a separate thread, and user has to implement
  * handleConnectionEstablished() to tell how to handle the connection when established
  */
-public abstract class Connector
+public abstract class Connector extends TCPComponent
 		implements Runnable, ConnectionEstablishedHandler, FailedToConnectHandler {
 
 	public static final String TAG = "Connector";
@@ -31,7 +30,7 @@ public abstract class Connector
 	private int         remotePort    = DEFAULT_REMOTE_PORT;
 	private int  		timeout       = DEFAULT_TIMEOUT;
 
-	public Connector(@NotNull InetAddress remoteAddress, int remotePort, int timeout)
+	public Connector(InetAddress remoteAddress, int remotePort, int timeout)
 			throws ComponentInitFailedException {
 		if (remotePort < 0 || 65536 <= remotePort) {
 			throw new ComponentInitFailedException("port is invalid.");
@@ -43,16 +42,20 @@ public abstract class Connector
 		this.remoteAddress = remoteAddress;
 		this.remotePort = remotePort;
 		this.timeout = timeout;
+
+		onInitialize();
 	}
 
-	public Connector(@NotNull InetAddress remoteAddress) throws ComponentInitFailedException {
+	public Connector(InetAddress remoteAddress) throws ComponentInitFailedException {
 		this(remoteAddress, DEFAULT_REMOTE_PORT, DEFAULT_TIMEOUT);
 	}
 
 	public void handleFailedToConnect(Socket socket, Throwable throwable, Object sender) {
 
 		/* print the reason of the failure */
-		System.err.println("failed to connect to remote endpoint. reason: " + throwable.getStackTrace());
+		System.err.println("failed to connect to remote endpoint.");
+		throwable.printStackTrace();
+
 
 		/* try to close the socket */
 		try {
@@ -71,6 +74,8 @@ public abstract class Connector
 
 	@Override
 	public void run() {
+		onStart();
+
 		Socket socket = new Socket();
 
 		try {
@@ -90,6 +95,7 @@ public abstract class Connector
 				}
 				catch (IOException ignored) { }
 			}
+			onShutdown();
 		}
 	}
 }

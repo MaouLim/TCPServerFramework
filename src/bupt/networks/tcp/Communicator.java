@@ -10,8 +10,6 @@ import bupt.networks.tcp.behaviors.TimeoutHandler;
 import bupt.networks.tcp.exceptions.ComponentInitFailedException;
 import bupt.util.ArrayUtil;
 import bupt.util.BytesUtil;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -28,7 +26,7 @@ import java.nio.charset.StandardCharsets;
  * message from remote. and it must be run on a separate thread. use send() to
  * send the message to remote endpoint.
  */
-public abstract class Communicator
+public abstract class Communicator extends TCPComponent
 		implements Runnable,
 				   ConnectionResetHandler,
 			       MessageArrivedHandler,
@@ -47,7 +45,7 @@ public abstract class Communicator
 	private DataInputStream  inputStream  = null;
 	private DataOutputStream outputStream = null;
 
-	public Communicator(@NotNull Socket socket, int timeout, Charset charset)
+	public Communicator(Socket socket, int timeout, Charset charset)
 			throws ComponentInitFailedException {
 
 		if (socket.isClosed() || !socket.isConnected()) {
@@ -66,23 +64,25 @@ public abstract class Communicator
 			this.inputStream = new DataInputStream(this.socket.getInputStream());
 			this.outputStream = new DataOutputStream(this.socket.getOutputStream());
 			this.available = true;
+
+			onInitialize();
 		}
 		catch (Exception ex) {
 			throw new ComponentInitFailedException("failed when initializes inner components", ex);
 		}
 	}
 
-	public Communicator(@NotNull Socket socket, int timeout)
+	public Communicator(Socket socket, int timeout)
 			throws ComponentInitFailedException {
 		this(socket, timeout, DEFAULT_CHARSET);
 	}
 
-	public Communicator(@NotNull Socket socket, Charset charset)
+	public Communicator(Socket socket, Charset charset)
 			throws ComponentInitFailedException {
 		this(socket, DEFAULT_TIMEOUT, charset);
 	}
 
-	public Communicator(@NotNull Socket socket)
+	public Communicator(Socket socket)
 			throws ComponentInitFailedException {
 		this(socket, DEFAULT_TIMEOUT, DEFAULT_CHARSET);
 	}
@@ -149,6 +149,8 @@ public abstract class Communicator
 	@Override
 	public void run() {
 
+		onStart();
+
 		byte[] buff = new byte[RECEIVE_BUFF_SIZE];
 
 		while (available) {
@@ -182,9 +184,9 @@ public abstract class Communicator
 		}
 
 		this.close();
+		onShutdown();
 	}
 
-	@Nullable
 	public SocketAddress getRemoteSocketAddress() {
 		if (!available || null == socket || socket.isClosed()) {
 			return null;
@@ -192,7 +194,6 @@ public abstract class Communicator
 		return socket.getRemoteSocketAddress();
 	}
 
-	@Nullable
 	public SocketAddress getLocalSocketAddress() {
 		if (!available || null == socket || socket.isClosed()) {
 			return null;

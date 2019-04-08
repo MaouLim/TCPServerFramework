@@ -20,7 +20,7 @@ import java.net.SocketTimeoutException;
  * close() invoked, it has to be run on separate thread handleConnectionEstablished()
  * need to be implement to determinate how to handle the connection.
  */
-public abstract class Listener
+public abstract class Listener extends TCPComponent
 		implements Runnable, ConnectionEstablishedHandler, ExceptionHandler, TimeoutHandler {
 
 	public static final String TAG = "Listener";
@@ -45,6 +45,8 @@ public abstract class Listener
 			this.serverSocket.setSoTimeout(DEFAULT_TIMEOUT);
 			this.backlog = backlog;
 			this.available = true;
+
+			onInitialize();
 		}
 		catch (IOException ex) {
 			throw new ComponentInitFailedException("failed to init inner components.", ex);
@@ -86,6 +88,8 @@ public abstract class Listener
 
 	@Override
 	public void run() {
+		onStart();
+
 		int countConnections = 0;
 
 		while (available && 0 < backlog && countConnections < backlog) {
@@ -106,5 +110,6 @@ public abstract class Listener
 		}
 
 		this.close();
+		onShutdown();
 	}
 }
